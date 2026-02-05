@@ -1,0 +1,18 @@
+IDEJE:
+❌  1. Teme boja za različite vrste daltonizma - Odabir teme boja ovisno o vrsti daltonizma ------>> POSTOJI
+
+⚠️  2. Error isticanje - Isticanje errora uz pomoću okvira umjesto podcrtavanja ---------->> MOŽE, ALI NIJE NOVO
+
+✅  3. Povećanje - Povećavanje reda na kojem je i par redova oko kursora( ostatak može biti normalan ili zamagljen) ------>> ODLIČNO
+
+✅  4. Označavanje - Za označavanje koristiti znakove(npr na početku reda ❌ ako je error, ⚠️ ako je warning...) ----->> VRLO KORISNO, ALI JEDNOSTAVNO
+
+✅  5. Označavanje segmenata - Npr. jedan for i sve u njemu je jedne boje ili oznake --------->> ODLIČNO, ORIGINALNO
+
+⚠️  6. Naglašavanje razlicitih objekata - Npr. varijabla je deblja ili ima pozadinu drukčije boje ------>> UMJESTO BOJE: DEBLJINA, PODCRTAVANJE, POZADINSKI UZORAK
+
+✅  7. Zoom In/Out - Kad se napravi Zoom-out, Vidis kod podjeljen u sekcije. Kad se napravi Zoom-in, vidis detalje(npr. podebljane varijable) ------>> ODLIČNO
+
+❓  8. Zvuk errora - Kad napravis error, pusti se zvuk ------->> UPITNO
+
+✅  9. Vrijeme - Ako provodiš previše vremena tipkajući ili čitajući kod, prepoznaje se i predlaže stanku od nekoliko minuta(smanjuje još daljne pogoršavanje vida) ----->> UREDU
