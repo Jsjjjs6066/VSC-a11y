@@ -30,6 +30,13 @@
         "uiTheme": "vs-dark",
         "path": "./themes/normal-dark-theme.json"
       }
+    ],
+    "themes": [
+      {
+        "label": "normal-dark-theme",
+        "uiTheme": "vs-dark",
+        "path": "./themes/normal-dark-theme.json"
+      }
     ]
   },
   "scripts": {
