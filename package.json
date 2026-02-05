@@ -9,9 +9,7 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onStartupFinished"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -20,24 +18,37 @@
         "title": "Hello World"
       },
       {
-        "command": "bolji-pogled.activateNoLines",
-        "title": "Activate No Lines"
+        "command": "bolji-pogled.configureDiagnosticColors",
+        "title": "Configure Error/Warning Colors"
+      },
+      {
+        "command": "bolji-pogled.setErrorColor",
+        "title": "Set Error Color"
+      },
+      {
+        "command": "bolji-pogled.setWarningColor",
+        "title": "Set Warning Color"
+      },
+      {
+        "command": "bolji-pogled.resetDiagnosticColors",
+        "title": "Reset Error/Warning Colors"
       }
     ],
-    "themes": [
-      {
-        "label": "normal-dark-theme",
-        "uiTheme": "vs-dark",
-        "path": "./themes/normal-dark-theme.json"
+    "configuration": {
+      "title": "bolji_pogled",
+      "properties": {
+        "bolji-pogled.errorColor": {
+          "type": "string",
+          "default": "#D81B60",
+          "description": "Hex color for errors. Use #RRGGBB or #RRGGBBAA."
+        },
+        "bolji-pogled.warningColor": {
+          "type": "string",
+          "default": "#B26A00",
+          "description": "Hex color for warnings. Use #RRGGBB or #RRGGBBAA."
+        }
       }
-    ],
-    "themes": [
-      {
-        "label": "normal-dark-theme",
-        "uiTheme": "vs-dark",
-        "path": "./themes/normal-dark-theme.json"
-      }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -48,13 +59,13 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@types/vscode": "^1.108.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "@types/vscode": "^1.108.1",
-    "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2",
+    "typescript-eslint": "^8.54.0",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.54.0"
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
   }
 }
