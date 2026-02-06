@@ -14,6 +14,16 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "bolji-pogled.colorWebview",
+          "name": "Color Configuration",
+          "type": "webview",
+          "icon": "$(palette)"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "bolji-pogled.helloWorld",

@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { errorColor, warningColor } from './colors';
+import * as colorsModule from './colors';
+import { loadColorsFromConfig } from './test/colors';
 
-// Definiramo stil za Error (npr. debeli crveni pravokutnik)
-
+// Show colored decorations for diagnostics and update them when configuration changes
 export function activate(context: vscode.ExtensionContext) {
     let errorDecorationType: vscode.TextEditorDecorationType | undefined;
     let warningDecorationType: vscode.TextEditorDecorationType | undefined;
