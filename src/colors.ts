@@ -9,6 +9,7 @@ import {
   vscodeColorToHex,
   isValidHexColor
 } from "./test/colors";
+import { ColorWebviewProvider } from "./webview/colorWebviewProvider";
 
 type ColorChoice = { label: string; description: string; hex?: string };
 
@@ -24,8 +25,29 @@ const PALETTE: { name: string; hex: string }[] = [
   { name: "White", hex: "#FFFFFF" }
 ];
 
+let webviewProvider: ColorWebviewProvider | undefined;
+
 export function activate(context: vscode.ExtensionContext) {
   loadColorsFromConfig();
+
+  // Register the webview view provider
+  const errHex = vscodeColorToHex(errorColor);
+  const warnHex = vscodeColorToHex(warningColor);
+
+  webviewProvider = new ColorWebviewProvider(
+    context.extensionUri,
+    setErrorColorHexAndNotify,
+    setWarningColorHexAndNotify,
+    errHex,
+    warnHex
+  );
+
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      ColorWebviewProvider.viewType,
+      webviewProvider
+    )
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("bolji-pogled.configureDiagnosticColors", async () => {
@@ -49,6 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("bolji-pogled.resetDiagnosticColors", async () => {
       await resetDiagnosticColors();
       vscode.window.showInformationMessage("bolji_pogled: colors reset.");
+      updateWebviewColors();
     })
   );
 
@@ -59,9 +82,30 @@ export function activate(context: vscode.ExtensionContext) {
         e.affectsConfiguration("bolji-pogled.warningColor")
       ) {
         loadColorsFromConfig();
+        updateWebviewColors();
       }
     })
   );
+}
+
+async function setErrorColorHexAndNotify(hex: string): Promise<void> {
+  console.log('[colors] setErrorColorHexAndNotify ->', hex);
+  await setErrorColorHex(hex);
+  updateWebviewColors();
+}
+
+async function setWarningColorHexAndNotify(hex: string): Promise<void> {
+  console.log('[colors] setWarningColorHexAndNotify ->', hex);
+  await setWarningColorHex(hex);
+  updateWebviewColors();
+}
+
+function updateWebviewColors(): void {
+  if (webviewProvider) {
+    const errHex = vscodeColorToHex(errorColor);
+    const warnHex = vscodeColorToHex(warningColor);
+    webviewProvider.updateColors(errHex, warnHex);
+  }
 }
 
 async function openMenu(): Promise<void> {
