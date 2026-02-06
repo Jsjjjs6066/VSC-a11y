@@ -48,7 +48,7 @@
           "description": "Hex color for warnings. Use #RRGGBB or #RRGGBBAA."
         }
       }
-    ],
+    },
     "themes": [
       {
         "label": "normal-dark-theme",
@@ -90,7 +90,7 @@
         "uiTheme": "vs",
         "path": "./themes/tritanopia-white-theme.json"
       }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
