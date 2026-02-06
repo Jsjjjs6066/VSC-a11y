@@ -116,7 +116,7 @@ def rand_circle(dmin,dmax):
     ang=random.random()*math.tau
     # Nasumična udaljenost od centra (ali unutar granica)
     dist=random.random()*(SIZE*0.50-r)
-    # Pretvara polarne koordinate (kut, udaljenost) u kartezijske (x,y)
+    # Pretvara polarne koordinate (udaljenost, kut) u kartezijske (x,y)
     x=SIZE/2+math.cos(ang)*dist
     y=SIZE/2+math.sin(ang)*dist
     # Vraća tuple (x, y, radijus)
@@ -161,8 +161,8 @@ def generate_plate(text, palette):
     draw = ImageDraw.Draw(out)
 
     # Minimalni i maksimalni promjer krugova
-    dmin=SIZE/60  # ~8.6 piksela
-    dmax=SIZE/25  # ~20.8 piksela
+    dmin=SIZE/60 
+    dmax=SIZE/25  
     # Lista za pohranu svih generiranih krugova
     circles=[]
 
