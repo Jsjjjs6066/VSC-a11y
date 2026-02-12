@@ -5,3 +5,4 @@ node_modules
 *.vsix
 .vscode/
 theme-test.py
+screencast.mp4

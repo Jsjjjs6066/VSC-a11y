@@ -177,29 +177,6 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             transform: scale(1.05);
         }
 
-        .color-display {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background-color: var(--vscode-input-background);
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-
-        .color-preview {
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
-            border: 1px solid var(--vscode-button-border);
-        }
-
-        .color-value {
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: var(--vscode-descriptionForeground);
-            flex: 1;
-        }
 
         .reset-btn {
             width: 100%;
@@ -242,10 +219,6 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
                     <input type="text" id="errorHexInput" placeholder="#RRGGBB">
                 </div>
             </div>
-            <div class="color-display">
-                <div class="color-preview" id="errorPreview"></div>
-                <span class="color-value" id="errorValue"></span>
-            </div>
         </div>
 
         <!-- Warning Color Section -->
@@ -261,10 +234,6 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
                     <label for="warningHexInput">Hex code:</label>
                     <input type="text" id="warningHexInput" placeholder="#RRGGBB">
                 </div>
-            </div>
-            <div class="color-display">
-                <div class="color-preview" id="warningPreview"></div>
-                <span class="color-value" id="warningValue"></span>
             </div>
         </div>
 
