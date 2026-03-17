@@ -114,7 +114,7 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            flex: 1;
+            flex-shrink: 0;
         }
 
         label {
@@ -137,9 +137,11 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             flex-direction: column;
             gap: 6px;
             flex: 1;
+            min-width: 0;
         }
 
         input[type="text"] {
+            width: 100%;
             padding: 8px;
             border: 1px solid var(--vscode-input-border);
             border-radius: 4px;
@@ -147,6 +149,8 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             color: var(--vscode-input-foreground);
             font-size: 12px;
             font-family: 'Courier New', monospace;
+            box-sizing: border-box;
+            min-width: 0;
         }
 
         input[type="text"]:focus {
@@ -309,15 +313,11 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
 
             const pickerId = type === 'error' ? 'errorColorPicker' : 'warningColorPicker';
             const inputId = type === 'error' ? 'errorHexInput' : 'warningHexInput';
-            const previewId = type === 'error' ? 'errorPreview' : 'warningPreview';
-            const valueId = type === 'error' ? 'errorValue' : 'warningValue';
 
             const pickerValue = hex.length === 9 ? hex.slice(0, 7) : hex;
 
             document.getElementById(pickerId).value = pickerValue;
             document.getElementById(inputId).value = hex.toUpperCase();
-            document.getElementById(previewId).style.backgroundColor = hex;
-            document.getElementById(valueId).textContent = hex.toUpperCase();
 
             vscode.postMessage({
                 type: type === 'error' ? 'setErrorColor' : 'setWarningColor',
@@ -337,14 +337,10 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
         function updateColorDisplay(type, hex) {
             const pickerId = type === 'error' ? 'errorColorPicker' : 'warningColorPicker';
             const inputId = type === 'error' ? 'errorHexInput' : 'warningHexInput';
-            const previewId = type === 'error' ? 'errorPreview' : 'warningPreview';
-            const valueId = type === 'error' ? 'errorValue' : 'warningValue';
 
             const pickerValue = hex.length === 9 ? hex.slice(0, 7) : hex;
             document.getElementById(pickerId).value = pickerValue;
             document.getElementById(inputId).value = hex;
-            document.getElementById(previewId).style.backgroundColor = hex;
-            document.getElementById(valueId).textContent = hex;
         }
 
         initializePresets();
