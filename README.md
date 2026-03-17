@@ -20,16 +20,16 @@ Here we'll only showcase the dark ones in pictures.
 **The syntax highlighting does *NOT* change with the selected theme.**
 
 Normal - for people who dont have daltonism
-![Normal](https://raw.githubusercontent.com/Jsjjjs6066/VSC-a11y/readme/images/normal.png)
+![Normal](https://raw.githubusercontent.com/Jsjjjs6066/VSC-a11y/master/images/normal.png)
 
 Deuteranopia - red/green and yellow/brown confusion
-![Deuteranopia](https://raw.githubusercontent.com/Jsjjjs6066/VSC-a11y/readme/images/deuteranopia.png)
+![Deuteranopia](https://raw.githubusercontent.com/Jsjjjs6066/VSC-a11y/master/images/deuteranopia.png)
 
 Protanopia - confusing a lot of colors with red
-![Protanopia](https://raw.githubusercontent.com/Jsjjjs6066/VSC-a11y/readme/images/protanopia.png)
+![Protanopia](https://raw.githubusercontent.com/Jsjjjs6066/VSC-a11y/master/images/protanopia.png)
 
 Tritanopia - blue/green and yellow/violet confusion
-![Tritanopia](https://raw.githubusercontent.com/Jsjjjs6066/VSC-a11y/readme/images/tritanopia.png)
+![Tritanopia](https://raw.githubusercontent.com/Jsjjjs6066/VSC-a11y/master/images/tritanopia.png)
 
 ### Gif showcasing most functionalities
 (zamisli da je ovdje gif koij sve showcase-a)
