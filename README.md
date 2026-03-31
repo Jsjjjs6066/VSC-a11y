@@ -1,7 +1,7 @@
 # **VSC A11Y**
 ### About us
 This is a project made by Filip, Leon and Mateo.  
-We are from a Croatian informatics club called **[C.H.A.O.S. Josipovac](https://www.facebook.com/c.h.a.o.s.josipovac/)**.
+We are from a Croatian informatics and robotics club called **[C.H.A.O.S. Josipovac](https://www.facebook.com/c.h.a.o.s.josipovac/)**.
 
 ## What it's about
 A11Y is an abbreviation for **accessibility** beacuse there are 11 letters between a and y.  
@@ -47,5 +47,5 @@ The same window is where you can adjust the minimum terminal font size.
 | Version | Added
 |---------|--------------------------------------------------------------------------
 |   v1    | Syntax highlighting, themes, window to adjust syntax higlighting color
-|  v1.1   | Minimum terminal font size, readme, published the exstension
+|   v2    | Minimum terminal font size, readme, published the exstension, Ishihara test
 
