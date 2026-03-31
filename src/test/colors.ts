@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-const CONFIG_SECTION = "1a11ySettings";
+const CONFIG_SECTION = "a11ySettings";
 const ERROR_KEY = "errorColor";
 const WARNING_KEY = "warningColor";
 
