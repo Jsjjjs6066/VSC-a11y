@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /c/Users/filip/.vscode/extensions/bolji_pogled/*.md)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
