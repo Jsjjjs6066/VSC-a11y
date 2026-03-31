@@ -2,8 +2,8 @@
   "name": "vsc-a11y",
   "displayName": "VSC A11Y",
   "version": "1.1.0",
-  "publisher": "CHAOS Josipovac",
-  "icon": "images/biggericon.png",
+  "publisher": "CHAOSJosipovac",
+  "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.108.1"
   },

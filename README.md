@@ -1,7 +1,7 @@
 # **VSC A11Y**
 ### About us
 This is a project made by Filip, Leon and Mateo.  
-We are from a Croatian informatics and robotics club called **[C.H.A.O.S. Josipovac](https://www.facebook.com/c.h.a.o.s.josipovac/)**.
+We are from a Croatian informatics and robotics club called **[C.H.A.O.S. Josipovac](https://chaos-josipovac.hr/)**.
 
 ## What it's about
 A11Y is an abbreviation for **accessibility** beacuse there are 11 letters between a and y.  
