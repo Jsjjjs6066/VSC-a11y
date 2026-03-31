@@ -5,7 +5,7 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
 
   private _view?: vscode.WebviewView;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(private readonly _extensionUri: vscode.Uri) { }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -20,6 +20,15 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+
+    webviewView.webview.onDidReceiveMessage(async (data) => {
+      console.log('[ColorWebviewProvider] message from webview:', data);
+      switch (data.type) {
+        case "showDiagnosis":
+          vscode.window.showInformationMessage(data.diagnosis);
+          break;
+      }
+    });
   }
 
   private _getHtmlForWebview(webview: vscode.Webview): string {
@@ -36,6 +45,8 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
 
     body {
       margin: 0;
+      margin-left: 8px;
+      margin-right: 8px;
       padding: 16px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       color: var(--vscode-foreground);
@@ -43,7 +54,7 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
     }
 
     h1 {
-      margin: 0 0 16px 0;
+      margin: 0 0 0 0;
       font-size: 18px;
       color: var(--vscode-foreground);
     }
@@ -61,7 +72,8 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
     }
 
     .toolbar button,
-    .toolbar select {
+    .toolbar select,
+    .btn {
       padding: 8px 10px;
       border-radius: 4px;
       border: 1px solid var(--vscode-input-border);
@@ -69,9 +81,11 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
       color: var(--vscode-button-foreground);
       cursor: pointer;
       font-size: 12px;
+      width: 100%;
     }
 
-    .toolbar button:hover {
+    .toolbar button:hover,
+    .btn:hover {
       background: var(--vscode-button-hoverBackground);
     }
 
@@ -118,15 +132,19 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
       font-size: 12px;
       color: var(--vscode-descriptionForeground);
     }
-
+    
     input[type="text"] {
-      width: 100%;
       padding: 8px;
-      border: 1px solid var(--vscode-input-border);
-      border-radius: 4px;
+      border: none;
+      width: calc(100% - 16px);
       background: var(--vscode-input-background);
       color: var(--vscode-input-foreground);
       font-size: 12px;
+      border-radius: 4px;
+    }
+    .input-div {
+      width: 100%;
+      border: 1px solid var(--vscode-input-border);
     }
 
     .button-row {
@@ -143,47 +161,47 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
 <body>
   <div class="layout">
     <h1>Ishihara Canvas Test</h1>
+    <button class="btn" id="startBtn">Start Test Sequence</button>
 
-    <div class="toolbar">
-      <button id="startBtn">Start Test Sequence</button>
-      <button id="nextBtn" disabled>Next Plate</button>
-      <button id="newPlateBtn">Generate New Plate</button>
-      <select id="testMode">
-        <option value="control">Control</option>
-        <option value="red_green">Red/Green</option>
-        <option value="blue_yellow">Blue/Yellow</option>
-      </select>
-    </div>
-
-    <div class="canvas-wrapper">
-      <canvas id="plateCanvas" width="600" height="600"></canvas>
-    </div>
-
-    <div class="controls">
-      <div class="inputs">
-        <label>Current test:
-          <span id="currentTest">None</span>
-        </label>
-        <label>Type what number you see:
-          <input id="answerInput" type="text" placeholder="e.g. 12" autocomplete="off" />
-        </label>
+    <div style="display: none;" class="test">
+      <div class="canvas-wrapper">
+        <canvas id="plateCanvas" width="600" height="600"></canvas>
       </div>
 
-      <div class="button-row">
-        <button id="submitBtn">Submit Answer</button>
-        <button id="resetBtn">Reset Results</button>
-      </div>
+      <div class="controls">
+        <div class="inputs">
+          <label>Type what number you see:
+          </label>
+          <div class="input-div">
+            <input id="answerInput" type="text" placeholder="e.g. 12" autocomplete="off" />
+          </div>
+        </div>
 
-      <div class="status" id="resultBox">
-        Press Start Test Sequence or Generate New Plate.
+        <div class="button-row">
+          <button class="btn" id="submitBtn">Submit Answer</button>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
+    const vscode = acquireVsCodeApi();
     const SIZE = 600;
     const TOTAL_CIRCLES = 1000;
     const BACKGROUND = '#ffffff';
+
+    function getDiagnosis() {
+      if (!results.control) {
+        return VISION_PROBLEM_OR_DISPLAY;
+      }
+      if (!results.red_green) {
+        return RED_GREEN_DEFICIENCY;
+      }
+      if (!results.blue_yellow) {
+        return BLUE_YELLOW_DEFICIENCY;
+      }
+      return NORMAL_COLOR_VISION;
+    }
 
     const PALETTES = {
       red_green: {
@@ -208,15 +226,10 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
 
     const canvas = document.getElementById('plateCanvas');
     const ctx = canvas.getContext('2d');
-    const currentTestLabel = document.getElementById('currentTest');
-    const resultBox = document.getElementById('resultBox');
     const answerInput = document.getElementById('answerInput');
     const testMode = document.getElementById('testMode');
     const startBtn = document.getElementById('startBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const newPlateBtn = document.getElementById('newPlateBtn');
     const submitBtn = document.getElementById('submitBtn');
-    const resetBtn = document.getElementById('resetBtn');
 
     let currentTestIndex = -1;
     let realNumbers = {};
@@ -224,74 +237,67 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
     let currentKey = '';
 
     startBtn.addEventListener('click', () => {
+      document.querySelector('.test').style.display = 'block';
+      startBtn.style.display = 'none';
       currentTestIndex = 0;
       realNumbers = {};
       results = {};
       answerInput.value = '';
+      answerInput.focus();
       runCurrentTest();
-      nextBtn.disabled = true;
-      setResult('Follow the prompt and submit your answer.', 'info');
     });
 
-    nextBtn.addEventListener('click', () => {
+    function nextTest() {
       if (currentTestIndex < tests.length - 1) {
         currentTestIndex += 1;
         answerInput.value = '';
+        answerInput.focus();
         runCurrentTest();
-        setResult('Submit your answer for the next plate.', 'info');
       }
-    });
-
-    newPlateBtn.addEventListener('click', () => {
-      const selected = testMode.value;
-      generatePlateForMode(selected, false);
-      setResult('A new plate has been generated. Enter what number you see.', 'info');
+    }
+    answerInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitBtn.click();
+      }
     });
 
     submitBtn.addEventListener('click', () => {
       const answer = answerInput.value.trim();
       if (!currentKey) {
-        return setResult('Start a test or generate a plate first.', 'warning');
+        return;
       }
       if (!/^[0-9]{2}$/.test(answer)) {
-        return setResult('Please enter a two-digit number like 12 or 45.', 'warning');
+        return;
       }
       const expected = realNumbers[currentKey];
       const correct = answer === expected;
       results[currentKey] = correct;
 
       if (currentTestIndex >= 0 && currentTestIndex < tests.length - 1) {
-        nextBtn.disabled = false;
+        nextTest();
       }
-
-      const message = correct ? \`Correct! This plate was \${expected}.\` : \`Incorrect. The plate was \${expected}.\`;
-      if (currentTestIndex === tests.length - 1 && tests[currentTestIndex].key === currentKey) {
+      else if (currentTestIndex === tests.length - 1 && tests[currentTestIndex].key === currentKey) {
         const diagnosis = getDiagnosis();
-        setResult(\`\${message} \${diagnosis}\`); 
-        nextBtn.disabled = true;
-      } else {
-        setResult(message + ' Press Next Plate or generate a new plate.', correct ? 'success' : 'error');
+        vscode.postMessage({ type: 'showDiagnosis', diagnosis: diagnosis.msg }); 
+        reset();
       }
     });
 
-    resetBtn.addEventListener('click', () => {
+    function reset() {
+      startBtn.style.display = 'block';
+      document.querySelector('.test').style.display = 'none';
       currentTestIndex = -1;
       currentKey = '';
       realNumbers = {};
       results = {};
       answerInput.value = '';
-      currentTestLabel.textContent = 'None';
       ctx.fillStyle = BACKGROUND;
       ctx.fillRect(0, 0, SIZE, SIZE);
-      nextBtn.disabled = true;
-      setResult('Results reset. Start a new test or generate a plate.', 'info');
-    });
+    }
 
     function runCurrentTest() {
       const test = tests[currentTestIndex];
       generatePlateForMode(test.key, true);
-      currentTestLabel.textContent = test.label;
-      nextBtn.disabled = true;
     }
 
     function generatePlateForMode(key, storeAnswer) {
@@ -390,23 +396,10 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
       ctx.fill();
     }
 
-    function getDiagnosis() {
-      if (!results.control) {
-        return 'Assessment: vision_problem_or_display - the control plate was not identified correctly.';
-      }
-      if (!results.red_green) {
-        return 'Assessment: red_green_deficiency - the red/green plate was not identified correctly.';
-      }
-      if (!results.blue_yellow) {
-        return 'Assessment: blue_yellow_deficiency - the blue/yellow plate was not identified correctly.';
-      }
-      return 'Assessment: normal_color_vision - all plates were identified correctly.';
-    }
-
-    function setResult(message, type = 'default') {
-      resultBox.textContent = message;
-      resultBox.style.borderColor = type === 'error' ? '#F44747' : type === 'success' ? '#0E9F6E' : 'var(--vscode-sideBar-border)';
-    }
+    const NORMAL_COLOR_VISION = {"msg": "Normal color vision", "theme_dark": "normal-dark-theme", "theme_light": "normal-light-theme"};
+    const VISION_PROBLEM_OR_DISPLAY = {"msg": "Vision problem or display issue (protanopia)", "theme_dark": "protanopia-dark-theme", "theme_light": "protanopia-light-theme"};
+    const RED_GREEN_DEFICIENCY = {"msg": "Red-green deficiency (deuteranopia)", "theme_dark": "deuteranopia-dark-theme", "theme_light": "deuteranopia-light-theme"};
+    const BLUE_YELLOW_DEFICIENCY = {"msg": "Blue-yellow deficiency (tritanopia)", "theme_dark": "tritanopia-dark-theme", "theme_light": "tritanopia-light-theme"};
 
     // initialize blank plate
     ctx.fillStyle = BACKGROUND;
