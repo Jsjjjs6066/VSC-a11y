@@ -10,6 +10,14 @@ import math
 import random
 from PIL import Image, ImageDraw, ImageFont
 
+
+# Potrebno je instalirati Pillow biblioteku za rad s slikama:
+    #     pip install Pillow
+    
+    # Note: Na Linux, instaliraj DejaVu font ako je potrebno:
+    #     sudo apt-get install fonts-dejavu-core  
+    #     sudo dnf install dejavu-sans-fonts 
+
 # ==========================================================================
 # KONFIGURACIJA
 # ==========================================================================
@@ -76,14 +84,34 @@ def make_text_mask(text):
     #BACKGROUND= boja pozadine (postavljena gore)
     img = Image.new("RGB",(SIZE,SIZE),BACKGROUND)
     # Objekt za crtanje na slici
-    d = ImageDraw.Draw(img)
+    d = ImageDraw.Draw(img)    
+    
 
-    # Pokušava učitati Arial font, veličina ~45% dimenzije slike
-    try:
-        font = ImageFont.truetype("arial.ttf", int(SIZE*0.55))
-    except:
-        # Ako Arial nije dostupan, koristi osnovni font
-        font = ImageFont.load_default()
+
+    # Lista fontova po prioritetu - probat će svaki dok ne nađe dostupan
+    font_options = [
+        "arial.ttf",           # Windows
+        "Arial.ttf",           # macOS
+        "DejaVuSans.ttf",      # Linux (Debian/Ubuntu)
+        "LiberationSans-Regular.ttf",  # Linux (alternativa)
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",  # Linux puni path
+    ]
+
+    font = None
+    for font_name in font_options:
+        try:
+            font = ImageFont.truetype(font_name, int(SIZE*0.55))
+            break
+        except:
+            continue
+    if font is None:
+        font = ImageFont.load_default(size=int(SIZE*0.45))
+        
+    # try:
+    #     font = ImageFont.truetype("arial.ttf", int(SIZE*0.55))
+    # except:
+    #     # Ako Arial nije dostupan, koristi osnovni font
+    #     font = ImageFont.load_default()
 
     # Izračunava dimenzije teksta da bi ga centrirao
     box = d.textbbox((0,0),text,font=font)
