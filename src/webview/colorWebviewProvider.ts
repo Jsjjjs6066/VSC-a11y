@@ -132,6 +132,7 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             display: flex;
             gap: 12px;
             align-items: flex-start;
+            flex-direction: column;
         }
 
         .color-picker-wrapper {
@@ -139,6 +140,7 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             flex-direction: column;
             gap: 8px;
             flex-shrink: 0;
+            width: 100%;
         }
 
         label {
@@ -148,8 +150,9 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
         }
 
         input[type="color"] {
-            width: 80px;
-            height: 80px;
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            height: auto;
             border: 1px solid var(--vscode-button-border);
             border-radius: 4px;
             cursor: pointer;

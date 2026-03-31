@@ -73,19 +73,19 @@
       }
     ],
     "configuration": {
-      "title": "bolji_pogled",
+      "title": "A11Y Settings",
       "properties": {
-        "bolji-pogled.errorColor": {
+        "a11ySettings.errorColor": {
           "type": "string",
           "default": "#D81B60",
           "description": "Hex color for errors. Use #RRGGBB or #RRGGBBAA."
         },
-        "bolji-pogled.warningColor": {
+        "a11ySettings.warningColor": {
           "type": "string",
           "default": "#B26A00",
           "description": "Hex color for warnings. Use #RRGGBB or #RRGGBBAA."
         },
-        "bolji-pogled.minFontSize": {
+        "a11ySettings.minFontSize": {
           "type": "number",
           "default": 20,
           "minimum": 1,
