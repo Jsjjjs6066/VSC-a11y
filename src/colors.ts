@@ -73,7 +73,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("bolji-pogled.resetDiagnosticColors", async () => {
       await resetDiagnosticColors();
-      vscode.window.showInformationMessage("bolji_pogled: colors reset.");
+      vscode.window.showInformationMessage("A11Y: colors reset.");
       updateWebviewColors();
     })
   );

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-const CONFIG_SECTION = 'bolji-pogled';
+const CONFIG_SECTION = 'a11ySettings';
 const FONT_SIZE_KEY = 'minFontSize';
 export const DEFAULT_MIN_FONT_SIZE = 20;
 
@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.workspace.onDidChangeConfiguration((e) => {
-            if (e.affectsConfiguration('bolji-pogled.minFontSize')) {
+            if (e.affectsConfiguration('a11ySettings.minFontSize')) {
                 applyMinFontSize(getMinFontSize());
             }
         })
