@@ -15,13 +15,34 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "bolji-pogled_color_container",
+          "title": "Color Configuration",
+          "icon": "$(symbol-color)"
+        },
+        {
+          "id": "bolji-pogled_ishihara_container",
+          "title": "Ishihara test",
+          "icon": "$(eye)"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "bolji-pogled_color_container": [
         {
           "id": "bolji-pogled.colorWebview",
           "name": "Color Configuration",
           "type": "webview",
           "icon": "$(palette)"
+        }
+      ],
+      "bolji-pogled_ishihara_container": [
+        {
+          "id": "bolji-pogled_ishihara-webview",
+          "name": "Ishihara Test",
+          "type": "webview"
         }
       ]
     },
@@ -45,22 +66,26 @@
       {
         "command": "bolji-pogled.resetDiagnosticColors",
         "title": "Reset Error/Warning Colors"
+      },
+      {
+        "command": "ishihara.start",
+        "title": "Start Ishihara Test"
       }
     ],
     "configuration": {
-      "title": "bolji_pogled",
+      "title": "A11Y Settings",
       "properties": {
-        "bolji-pogled.errorColor": {
+        "a11ySettings.errorColor": {
           "type": "string",
           "default": "#D81B60",
           "description": "Hex color for errors. Use #RRGGBB or #RRGGBBAA."
         },
-        "bolji-pogled.warningColor": {
+        "a11ySettings.warningColor": {
           "type": "string",
           "default": "#B26A00",
           "description": "Hex color for warnings. Use #RRGGBB or #RRGGBBAA."
         },
-        "bolji-pogled.minFontSize": {
+        "a11ySettings.minFontSize": {
           "type": "number",
           "default": 20,
           "minimum": 1,

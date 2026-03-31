@@ -73,7 +73,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("bolji-pogled.resetDiagnosticColors", async () => {
       await resetDiagnosticColors();
-      vscode.window.showInformationMessage("bolji_pogled: colors reset.");
+      vscode.window.showInformationMessage("A11Y: colors reset.");
       updateWebviewColors();
     })
   );
@@ -136,7 +136,7 @@ async function openMenu(): Promise<void> {
   if (pick.action === "warning") return pickAndSetColor("warning");
 
   await resetDiagnosticColors();
-  vscode.window.showInformationMessage("bolji_pogled: colors reset.");
+  vscode.window.showInformationMessage("A11Y: colors reset.");
 }
 
 async function pickAndSetColor(kind: "error" | "warning"): Promise<void> {
@@ -167,10 +167,10 @@ async function pickAndSetColor(kind: "error" | "warning"): Promise<void> {
 
   if (kind === "error") {
     await setErrorColorHex(hex);
-    vscode.window.showInformationMessage(`bolji_pogled: errorColor = ${hex.toUpperCase()}`);
+    vscode.window.showInformationMessage(`A11Y: errorColor = ${hex.toUpperCase()}`);
   } else {
     await setWarningColorHex(hex);
-    vscode.window.showInformationMessage(`bolji_pogled: warningColor = ${hex.toUpperCase()}`);
+    vscode.window.showInformationMessage(`A11Y: warningColor = ${hex.toUpperCase()}`);
   }
 }
 
