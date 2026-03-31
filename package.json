@@ -1,8 +1,9 @@
 {
-  "name": "A11Y",
-  "displayName": "a11y",
-  "description": "",
-  "version": "0.0.1",
+  "name": "vsc-a11y",
+  "displayName": "VSC A11Y",
+  "version": "1.1.0",
+  "publisher": "CHAOS Josipovac",
+  "icon": "images/biggericon.png",
   "engines": {
     "vscode": "^1.108.1"
   },
@@ -58,6 +59,12 @@
           "type": "string",
           "default": "#B26A00",
           "description": "Hex color for warnings. Use #RRGGBB or #RRGGBBAA."
+        },
+        "bolji-pogled.minFontSize": {
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "description": "Minimum font size for the terminal and debug console."
         }
       }
     },

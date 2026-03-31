@@ -1,31 +1,31 @@
 import * as vscode from 'vscode';
 
-function max(a: number, b: number): number {
-    if (a > b) {
-        return a;
-    }
-    return b;
+const CONFIG_SECTION = 'bolji-pogled';
+const FONT_SIZE_KEY = 'minFontSize';
+export const DEFAULT_MIN_FONT_SIZE = 20;
+
+function applyMinFontSize(minSize: number) {
+    vscode.workspace.getConfiguration('debug').update('console.fontSize', minSize);
+    vscode.workspace.getConfiguration('terminal').update('integrated.fontSize', minSize);
 }
 
-const MINIMUM_FONT_SIZE = 20;
-
-function setupDebugFont(context: vscode.ExtensionContext) {
-    let font: number | undefined = vscode.workspace.getConfiguration("debug").get("console.fontSize");
-    if (font === undefined) {
-        font = 0;
-    }
-    vscode.workspace.getConfiguration("debug").update("console.fontSize", max(font, MINIMUM_FONT_SIZE));
+export function getMinFontSize(): number {
+    return vscode.workspace.getConfiguration(CONFIG_SECTION).get<number>(FONT_SIZE_KEY, DEFAULT_MIN_FONT_SIZE);
 }
 
-function setupTerminalFont(context: vscode.ExtensionContext) {
-    let font: number | undefined = vscode.workspace.getConfiguration("terminal").get("integrated.fontSize");
-    if (font === undefined) {
-        font = 0;
-    }
-    vscode.workspace.getConfiguration("terminal").update("integrated.fontSize", max(font, MINIMUM_FONT_SIZE));
+export async function setMinFontSize(size: number): Promise<void> {
+    await vscode.workspace.getConfiguration(CONFIG_SECTION).update(FONT_SIZE_KEY, size, vscode.ConfigurationTarget.Global);
+    applyMinFontSize(size);
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    setupDebugFont(context);
-    setupTerminalFont(context);
+    applyMinFontSize(getMinFontSize());
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration((e) => {
+            if (e.affectsConfiguration('bolji-pogled.minFontSize')) {
+                applyMinFontSize(getMinFontSize());
+            }
+        })
+    );
 }

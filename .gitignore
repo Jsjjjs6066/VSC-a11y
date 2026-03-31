@@ -6,3 +6,4 @@ node_modules
 .vscode/
 theme-test.py
 screencast.mp4
+.claude/settings.local.json

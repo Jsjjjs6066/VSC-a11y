@@ -4,14 +4,23 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "bolji-pogled.colorWebview";
 
   private _view?: vscode.WebviewView;
+  private _currentErrorHex: string;
+  private _currentWarningHex: string;
+  private _currentFontSize: number;
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
     private readonly _onErrorColorChanged: (hex: string) => Promise<void>,
     private readonly _onWarningColorChanged: (hex: string) => Promise<void>,
-    private readonly _errorColorHex: string,
-    private readonly _warningColorHex: string
-  ) {}
+    private readonly _onFontSizeChanged: (size: number) => Promise<void>,
+    errorColorHex: string,
+    warningColorHex: string,
+    fontSizeInitial: number
+  ) {
+    this._currentErrorHex = errorColorHex;
+    this._currentWarningHex = warningColorHex;
+    this._currentFontSize = fontSizeInitial;
+  }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -25,7 +34,7 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri],
     };
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview, this._currentErrorHex, this._currentWarningHex, this._currentFontSize);
 
         webviewView.webview.onDidReceiveMessage(async (data) => {
             console.log('[ColorWebviewProvider] message from webview:', data);
@@ -38,6 +47,10 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
                     console.log('[ColorWebviewProvider] setWarningColor ->', data.hex);
                     await this._onWarningColorChanged(data.hex);
                     break;
+                case "setFontSize":
+                    this._currentFontSize = data.size;
+                    await this._onFontSizeChanged(data.size);
+                    break;
                 case "resetColors":
                     console.log('[ColorWebviewProvider] resetColors requested');
                     await vscode.commands.executeCommand('bolji-pogled.resetDiagnosticColors');
@@ -47,6 +60,8 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
   }
 
   public updateColors(errorHex: string, warningHex: string) {
+    this._currentErrorHex = errorHex;
+    this._currentWarningHex = warningHex;
     if (this._view) {
             console.log('[ColorWebviewProvider] sending updateColors ->', { errorHex, warningHex });
             this._view.webview.postMessage({
@@ -57,7 +72,16 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
     }
   }
 
-  private _getHtmlForWebview(webview: vscode.Webview): string {
+  public updateFontSize(size: number) {
+    this._currentFontSize = size;
+    if (this._view) {
+      this._view.webview.postMessage({ type: "updateFontSize", size });
+    }
+  }
+
+  private _getHtmlForWebview(webview: vscode.Webview, errorHex: string, warningHex: string, fontSize: number): string {
+    const errorPickerValue = errorHex.length === 9 ? errorHex.slice(0, 7) : errorHex;
+    const warningPickerValue = warningHex.length === 9 ? warningHex.slice(0, 7) : warningHex;
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -114,7 +138,7 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            flex: 1;
+            flex-shrink: 0;
         }
 
         label {
@@ -137,9 +161,11 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             flex-direction: column;
             gap: 6px;
             flex: 1;
+            min-width: 0;
         }
 
         input[type="text"] {
+            width: 100%;
             padding: 8px;
             border: 1px solid var(--vscode-input-border);
             border-radius: 4px;
@@ -147,6 +173,8 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             color: var(--vscode-input-foreground);
             font-size: 12px;
             font-family: 'Courier New', monospace;
+            box-sizing: border-box;
+            min-width: 0;
         }
 
         input[type="text"]:focus {
@@ -177,29 +205,6 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             transform: scale(1.05);
         }
 
-        .color-display {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background-color: var(--vscode-input-background);
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-
-        .color-preview {
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
-            border: 1px solid var(--vscode-button-border);
-        }
-
-        .color-value {
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: var(--vscode-descriptionForeground);
-            flex: 1;
-        }
 
         .reset-btn {
             width: 100%;
@@ -235,16 +240,12 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             <div class="color-group">
                 <div class="color-picker-wrapper">
                     <label for="errorColorPicker">Pick color:</label>
-                    <input type="color" id="errorColorPicker">
+                    <input type="color" id="errorColorPicker" value="${errorPickerValue}">
                 </div>
                 <div class="input-group">
                     <label for="errorHexInput">Hex code:</label>
-                    <input type="text" id="errorHexInput" placeholder="#RRGGBB">
+                    <input type="text" id="errorHexInput" placeholder="#RRGGBB" value="${errorHex}">
                 </div>
-            </div>
-            <div class="color-display">
-                <div class="color-preview" id="errorPreview"></div>
-                <span class="color-value" id="errorValue"></span>
             </div>
         </div>
 
@@ -255,16 +256,23 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             <div class="color-group">
                 <div class="color-picker-wrapper">
                     <label for="warningColorPicker">Pick color:</label>
-                    <input type="color" id="warningColorPicker">
+                    <input type="color" id="warningColorPicker" value="${warningPickerValue}">
                 </div>
                 <div class="input-group">
                     <label for="warningHexInput">Hex code:</label>
-                    <input type="text" id="warningHexInput" placeholder="#RRGGBB">
+                    <input type="text" id="warningHexInput" placeholder="#RRGGBB" value="${warningHex}">
                 </div>
             </div>
-            <div class="color-display">
-                <div class="color-preview" id="warningPreview"></div>
-                <span class="color-value" id="warningValue"></span>
+        </div>
+
+        <!-- Font Size Section -->
+        <div class="color-section">
+            <h3>Min Terminal Font Size</h3>
+            <div class="color-group" style="align-items: center;">
+                <div class="input-group">
+                    <label for="fontSizeInput">Size (px):</label>
+                    <input type="number" id="fontSizeInput" min="1" max="72" value="${fontSize}" style="width:100%;padding:8px;border:1px solid var(--vscode-input-border);border-radius:4px;background-color:var(--vscode-input-background);color:var(--vscode-input-foreground);font-size:12px;box-sizing:border-box;">
+                </div>
             </div>
         </div>
 
@@ -308,12 +316,18 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
         }
 
         document.getElementById('errorColorPicker').addEventListener('input', (e) => {
-            console.log('[webview] errorColorPicker input ->', e.target.value);
+            document.getElementById('errorHexInput').value = e.target.value.toUpperCase();
+        });
+
+        document.getElementById('errorColorPicker').addEventListener('change', (e) => {
             setColor('error', e.target.value);
         });
 
         document.getElementById('warningColorPicker').addEventListener('input', (e) => {
-            console.log('[webview] warningColorPicker input ->', e.target.value);
+            document.getElementById('warningHexInput').value = e.target.value.toUpperCase();
+        });
+
+        document.getElementById('warningColorPicker').addEventListener('change', (e) => {
             setColor('warning', e.target.value);
         });
 
@@ -325,6 +339,13 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
         document.getElementById('warningHexInput').addEventListener('change', (e) => {
             console.log('[webview] warningHexInput change ->', e.target.value);
             setColor('warning', e.target.value);
+        });
+
+        document.getElementById('fontSizeInput').addEventListener('change', (e) => {
+            const size = parseInt(e.target.value, 10);
+            if (!isNaN(size) && size >= 1) {
+                vscode.postMessage({ type: 'setFontSize', size });
+            }
         });
 
         document.getElementById('resetBtn').addEventListener('click', () => {
@@ -340,15 +361,11 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
 
             const pickerId = type === 'error' ? 'errorColorPicker' : 'warningColorPicker';
             const inputId = type === 'error' ? 'errorHexInput' : 'warningHexInput';
-            const previewId = type === 'error' ? 'errorPreview' : 'warningPreview';
-            const valueId = type === 'error' ? 'errorValue' : 'warningValue';
 
             const pickerValue = hex.length === 9 ? hex.slice(0, 7) : hex;
 
             document.getElementById(pickerId).value = pickerValue;
             document.getElementById(inputId).value = hex.toUpperCase();
-            document.getElementById(previewId).style.backgroundColor = hex;
-            document.getElementById(valueId).textContent = hex.toUpperCase();
 
             vscode.postMessage({
                 type: type === 'error' ? 'setErrorColor' : 'setWarningColor',
@@ -362,20 +379,18 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
             if (message.type === 'updateColors') {
                 updateColorDisplay('error', message.errorHex);
                 updateColorDisplay('warning', message.warningHex);
+            } else if (message.type === 'updateFontSize') {
+                document.getElementById('fontSizeInput').value = message.size;
             }
         });
 
         function updateColorDisplay(type, hex) {
             const pickerId = type === 'error' ? 'errorColorPicker' : 'warningColorPicker';
             const inputId = type === 'error' ? 'errorHexInput' : 'warningHexInput';
-            const previewId = type === 'error' ? 'errorPreview' : 'warningPreview';
-            const valueId = type === 'error' ? 'errorValue' : 'warningValue';
 
             const pickerValue = hex.length === 9 ? hex.slice(0, 7) : hex;
             document.getElementById(pickerId).value = pickerValue;
             document.getElementById(inputId).value = hex;
-            document.getElementById(previewId).style.backgroundColor = hex;
-            document.getElementById(valueId).textContent = hex;
         }
 
         initializePresets();

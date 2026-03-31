@@ -9,6 +9,7 @@ import {
   vscodeColorToHex,
   isValidHexColor
 } from "./test/colors";
+import { getMinFontSize, setMinFontSize } from "./size";
 import { ColorWebviewProvider } from "./webview/colorWebviewProvider";
 
 type ColorChoice = { label: string; description: string; hex?: string };
@@ -37,14 +38,17 @@ export function activate(context: vscode.ExtensionContext) {
     context.extensionUri,
     setErrorColorHexAndNotify,
     setWarningColorHexAndNotify,
+    setFontSizeAndNotify,
     errHex,
-    warnHex
+    warnHex,
+    getMinFontSize()
   );
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       ColorWebviewProvider.viewType,
-      webviewProvider
+      webviewProvider,
+      { webviewOptions: { retainContextWhenHidden: true } }
     )
   );
 
@@ -83,6 +87,9 @@ export function activate(context: vscode.ExtensionContext) {
         loadColorsFromConfig();
         updateWebviewColors();
       }
+      if (e.affectsConfiguration("bolji-pogled.minFontSize")) {
+        webviewProvider?.updateFontSize(getMinFontSize());
+      }
     })
   );
 }
@@ -91,6 +98,11 @@ async function setErrorColorHexAndNotify(hex: string): Promise<void> {
   console.log('[colors] setErrorColorHexAndNotify ->', hex);
   await setErrorColorHex(hex);
   updateWebviewColors();
+}
+
+async function setFontSizeAndNotify(size: number): Promise<void> {
+  await setMinFontSize(size);
+  webviewProvider?.updateFontSize(size);
 }
 
 async function setWarningColorHexAndNotify(hex: string): Promise<void> {
