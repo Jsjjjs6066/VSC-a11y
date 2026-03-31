@@ -15,13 +15,34 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "bolji-pogled_color_container",
+          "title": "Color Configuration",
+          "icon": "$(symbol-color)"
+        },
+        {
+          "id": "bolji-pogled_ishihara_container",
+          "title": "Ishihara test",
+          "icon": "$(eye)"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "bolji-pogled_color_container": [
         {
           "id": "bolji-pogled.colorWebview",
           "name": "Color Configuration",
           "type": "webview",
           "icon": "$(palette)"
+        }
+      ],
+      "bolji-pogled_ishihara_container": [
+        {
+          "id": "bolji-pogled_ishihara-webview",
+          "name": "Ishihara Test",
+          "type": "webview"
         }
       ]
     },
@@ -45,6 +66,10 @@
       {
         "command": "bolji-pogled.resetDiagnosticColors",
         "title": "Reset Error/Warning Colors"
+      },
+      {
+        "command": "ishihara.start",
+        "title": "Start Ishihara Test"
       }
     ],
     "configuration": {
