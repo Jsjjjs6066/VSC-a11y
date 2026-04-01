@@ -76,5 +76,15 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeVisibleTextEditors(() => updateDecorations());
     // vscode.window.onDidChangeActiveTextEditor(() => updateDecorations());
     vscode.languages.onDidChangeDiagnostics(() => updateDecorations());
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration((e) => {
+            if (
+                e.affectsConfiguration("a11ySettings.errorColor") ||
+                e.affectsConfiguration("a11ySettings.warningColor")
+            ) {
+                updateDecorations();
+            }
+        })
+    );
     updateDecorations();
 }
