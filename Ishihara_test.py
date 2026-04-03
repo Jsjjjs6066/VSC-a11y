@@ -51,7 +51,7 @@ PALETTES = {
                (215,218,170),(229,213,125),(209,214,175)]
     },
 
-    # Test za plavo-žuti daltonizam (blue_yellowopija)
+    # Test za plavo-žuti daltonizam (tritanopija)
     # Rjeđi oblik - problem s razlikovanjem plave i žute
     "blue_yellow": {
         # Plave nijanse za broj

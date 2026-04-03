@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
 
+const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration();
+
 export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "bolji-pogled_ishihara-webview";
 
@@ -22,10 +24,9 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
-      console.log('[ColorWebviewProvider] message from webview:', data);
       switch (data.type) {
-        case "showDiagnosis":
-          vscode.window.showInformationMessage(data.diagnosis);
+        case "changeColorTheme":
+          await config.update('workbench.colorTheme', data.themeName, vscode.ConfigurationTarget.Global);
           break;
       }
     });
@@ -48,6 +49,10 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
       margin-left: 8px;
       margin-right: 8px;
       padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: calc(100vh - 32px);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       color: var(--vscode-foreground);
       background: var(--vscode-sideBar-background);
@@ -82,6 +87,7 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
       cursor: pointer;
       font-size: 12px;
       width: 100%;
+      margin-bottom: 10px;
     }
 
     .toolbar button:hover,
@@ -182,24 +188,87 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
         </div>
       </div>
     </div>
+    <div class="red-green", style="display: none;">
+      <p>Please select your red-green vision deficiency type:</p>
+      <button class="btn" onclick="window.red_green = 1;" id="deuteranopia">Deuteranopia</button>
+      <button class="btn" onclick="window.red_green = 2;" id="protanopia">Protanopia</button>
+      <p><center>Don't understand? Use the...</center></p>
+      <button class="btn" onclick="window.red_green = 3;" id="frequent">More Frequent Deficiency</button>
+      <button class="btn" onclick="window.red_green = 4;" id="normal">Default Theme</button>
+    </div>
+  </div>
+
+  <div class="diagnosis-cont" style="display: none;">
+    <div class="diagnosis">
+      
+    </div>
+    <div>
+      <p>Automatically equip our suggested themes for...</p>
+      <button class="btn" onclick="vscode.postMessage({ type: 'changeColorTheme', themeName: dark_theme }); " id="equipDarkBtn">Dark Mode</button>
+      <button class="btn" onclick="vscode.postMessage({ type: 'changeColorTheme', themeName: light_theme }); " id="equipLightBtn">Light Mode</button>
+    </div>
   </div>
 
   <script>
+    let light_theme = '';
+    let dark_theme = '';
     const vscode = acquireVsCodeApi();
     const SIZE = 600;
     const TOTAL_CIRCLES = 1000;
     const BACKGROUND = '#ffffff';
+    let diagnosisdiv = document.querySelector('.diagnosis');
+    let diagnosiscont = document.querySelector('.diagnosis-cont');
+    window.red_green = 0;
 
-    function getDiagnosis() {
+    async function getDiagnosis() {
       if (!results.control) {
         return VISION_PROBLEM_OR_DISPLAY;
       }
+
       if (!results.red_green) {
-        return RED_GREEN_DEFICIENCY;
+        reset();
+        window.red_green = 0;
+
+        // Helper to wrap the polling logic
+        const checkFlag = () => {
+          return new Promise((resolve) => {
+            const internalCheck = () => {
+              if (window.red_green === 0) {
+                window.setTimeout(internalCheck, 100);
+              } else {
+                document.querySelector('.red-green').style.display = 'none';
+
+                let finalResult;
+                if (window.red_green === 1 || window.red_green === 3) {
+                  finalResult = RED_GREEN_DEFICIENCY_DEUTERANOPIA;
+                } else if (window.red_green === 2) {
+                  finalResult = RED_GREEN_DEFICIENCY_PROTANOPIA;
+                } else {
+                  finalResult = NORMAL_COLOR_VISION;
+                }
+                resolve(finalResult);
+              }
+            };
+            internalCheck();
+          });
+        };
+
+        console.log('Waiting for user input...');
+        document.querySelector('.red-green').style.display = 'block';
+
+        // 2. PAUSE here until the user clicks a button and resolve() is called
+        const result = await checkFlag(); 
+
+        console.log('User selected:', result.msg, window.red_green);
+        
+        // 3. Now it returns 'all the way' correctly
+        return result; 
       }
+
       if (!results.blue_yellow) {
         return BLUE_YELLOW_DEFICIENCY;
       }
+
       return NORMAL_COLOR_VISION;
     }
 
@@ -244,6 +313,7 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
       results = {};
       answerInput.value = '';
       answerInput.focus();
+      diagnosiscont.style.display = 'none';
       runCurrentTest();
     });
 
@@ -277,9 +347,14 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
         nextTest();
       }
       else if (currentTestIndex === tests.length - 1 && tests[currentTestIndex].key === currentKey) {
-        const diagnosis = getDiagnosis();
-        vscode.postMessage({ type: 'showDiagnosis', diagnosis: diagnosis.msg }); 
-        reset();
+        getDiagnosis().then((diagnosis) => {;
+          console.log('Diagnosis result:', diagnosis);
+          diagnosiscont.style.display = 'block';
+          diagnosisdiv.textContent = diagnosis.msg;
+          light_theme = diagnosis.theme_light;
+          dark_theme = diagnosis.theme_dark;
+          reset();
+        });
       }
     });
 
@@ -397,9 +472,10 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
     }
 
     const NORMAL_COLOR_VISION = {"msg": "Normal color vision", "theme_dark": "normal-dark-theme", "theme_light": "normal-light-theme"};
-    const VISION_PROBLEM_OR_DISPLAY = {"msg": "Vision problem or display issue (protanopia)", "theme_dark": "protanopia-dark-theme", "theme_light": "protanopia-light-theme"};
-    const RED_GREEN_DEFICIENCY = {"msg": "Red-green deficiency (deuteranopia)", "theme_dark": "deuteranopia-dark-theme", "theme_light": "deuteranopia-light-theme"};
-    const BLUE_YELLOW_DEFICIENCY = {"msg": "Blue-yellow deficiency (tritanopia)", "theme_dark": "tritanopia-dark-theme", "theme_light": "tritanopia-light-theme"};
+    const VISION_PROBLEM_OR_DISPLAY = {"msg": "Vision problem or display issue", "theme_dark": "normal-dark-theme", "theme_light": "normal-light-theme"};
+    const RED_GREEN_DEFICIENCY_DEUTERANOPIA = {"msg": "Red-green deficiency (deuteranopia)", "theme_dark": "deuteranopia-dark-theme", "theme_light": "deuteranopia-white-theme"};
+    const RED_GREEN_DEFICIENCY_PROTANOPIA = {"msg": "Red-green deficiency (protanopia)", "theme_dark": "protanopia-dark-theme", "theme_light": "protanopia-white-theme"};
+    const BLUE_YELLOW_DEFICIENCY = {"msg": "Blue-yellow deficiency (tritanopia)", "theme_dark": "tritanopia-dark-theme", "theme_light": "tritanopia-white-theme"};
 
     // initialize blank plate
     ctx.fillStyle = BACKGROUND;
