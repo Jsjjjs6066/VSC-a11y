@@ -4,7 +4,7 @@
   "version": "2.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Jsjjjs6066/bolji_pogled"
+    "url": "https://github.com/Jsjjjs6066/VSC-a11y"
   },
   "publisher": "CHAOSJosipovac",
   "icon": "images/icon.png",
@@ -150,13 +150,17 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.108.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "typescript-eslint": "^8.54.0",
+    "@types/sinon": "^21.0.1",
+    "@types/vscode": "^1.108.1",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.54.0"
+  },
+  "dependencies": {
+    "sinon": "^21.0.3"
   }
 }
