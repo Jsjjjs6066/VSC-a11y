@@ -45,6 +45,7 @@ Another window is for checking if you are a daltonist.
 | 1.0.0   | Syntax highlighting, themes, window to adjust syntax highlighting color    |
 | 2.0.0   | Minimum terminal font size, readme, published the extension, Ishihara test |
 | 2.0.1   | Major bugfix                                                               |
+| 2.1.0   | Asked if you want to equip a theme that you were diagnosed with            |
 
 ## Contributing
 You can contribute to the project at [this github repo](https://github.com/Jsjjjs6066/VSC-a11y).
