@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { activate as activateNoLines } from './no_lines';
 import { activate as activateColors } from './colors';
 import { activate as activateSize } from './size';
-import { activate as activateIshihara } from './ishihara';
 import { IshiharaWebviewProvider } from './webview/ishiharaWebviewProvider';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -17,8 +16,6 @@ export function activate(context: vscode.ExtensionContext) {
 			ishiharaProvider
 		)
 	);
-
-	activateIshihara(context);
 }
 
 export function deactivate() {}
