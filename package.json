@@ -9,7 +9,7 @@
   "publisher": "CHAOSJosipovac",
   "icon": "images/icon.png",
   "engines": {
-    "vscode": "^1.108.1"
+    "vscode": "^1.104.0"
   },
   "categories": [
     "Other"
@@ -46,7 +46,8 @@
         {
           "id": "bolji-pogled_ishihara-webview",
           "name": "Ishihara Test",
-          "type": "webview"
+          "type": "webview",
+          "icon": "$(eye)"
         }
       ]
     },
