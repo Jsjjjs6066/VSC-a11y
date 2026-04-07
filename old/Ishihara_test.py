@@ -1,8 +1,7 @@
 # ============================================================================
 #                           VSC A11Y Extension
+#           (Test daltonizma baziran na Ishihara testu)
 #           (Color Blindness test based on Ishihara testing)
-#
-#
 # ===========================================================================
 
 
@@ -73,8 +72,8 @@ PALETTES = {
 # ===========================================================
 #       FUNKCIJA ZA KREIRANJE MASKE OD TEKSTA
 # ===========================================================
-# Kreira sliku s brojem koji će služiti kao maska (šablon) gdje će se
-# postavljati krugovi "on" boja
+# Kreira sliku s brojem koji će služiti kao maska gdje će se
+# postavljati krugovi
 
 def make_text_mask(text):
     # Kreira novu bijelu sliku
@@ -84,7 +83,7 @@ def make_text_mask(text):
     #BACKGROUND= boja pozadine (postavljena gore)
     img = Image.new("RGB",(SIZE,SIZE),BACKGROUND)
     # Objekt za crtanje na slici
-    d = ImageDraw.Draw(img)    
+    d = ImageDraw.Draw(img)
     
 
 
@@ -98,9 +97,9 @@ def make_text_mask(text):
     ]
 
     font = None
-    for font_name in font_options:
+    for name in font_options:
         try:
-            font = ImageFont.truetype(font_name, int(SIZE*0.55))
+            font = ImageFont.truetype(name, int(SIZE*0.55))
             break
         except:
             continue
