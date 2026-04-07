@@ -46,7 +46,8 @@
         {
           "id": "bolji-pogled_ishihara-webview",
           "name": "Ishihara Test",
-          "type": "webview"
+          "type": "webview",
+          "icon": "$(eye)"
         }
       ]
     },
@@ -150,7 +151,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "22.x",
+    "@types/node": "^22.19.17",
     "@types/sinon": "^21.0.1",
     "@types/vscode": "^1.108.1",
     "@vscode/test-cli": "^0.0.11",
