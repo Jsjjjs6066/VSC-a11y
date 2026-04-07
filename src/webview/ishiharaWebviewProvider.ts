@@ -192,6 +192,7 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
       <p>Please select your red-green vision deficiency type:</p>
       <button class="btn" onclick="window.red_green = 1;" id="deuteranopia">Deuteranopia</button>
       <button class="btn" onclick="window.red_green = 2;" id="protanopia">Protanopia</button>
+      <p><center><a href="https://www.nei.nih.gov/eye-health-information/eye-conditions-and-diseases/color-blindness/types-color-vision-deficiency#section-id-5718" target="_blank">Learn the difference</a></center></p>
       <p><center>Don't understand? Use the...</center></p>
       <button class="btn" onclick="window.red_green = 3;" id="frequent">More Frequent Deficiency</button>
       <button class="btn" onclick="window.red_green = 4;" id="normal">Default Theme</button>
@@ -226,7 +227,6 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
       }
 
       if (!results.red_green) {
-        reset();
         window.red_green = 0;
 
         // Helper to wrap the polling logic
@@ -347,6 +347,7 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
         nextTest();
       }
       else if (currentTestIndex === tests.length - 1 && tests[currentTestIndex].key === currentKey) {
+        document.querySelector('.test').style.display = 'none';
         getDiagnosis().then((diagnosis) => {;
           console.log('Diagnosis result:', diagnosis);
           diagnosiscont.style.display = 'block';
