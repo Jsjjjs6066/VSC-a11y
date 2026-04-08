@@ -7,3 +7,4 @@ node_modules
 theme-test.py
 .claude/
 docs/
+package_log.json
