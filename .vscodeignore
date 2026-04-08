@@ -9,3 +9,8 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+.claude/**
+docs/**
+old/**
+package-lock.json
+*.vsix

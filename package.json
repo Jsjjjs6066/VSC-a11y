@@ -1,7 +1,7 @@
 {
   "name": "vsc-a11y",
   "displayName": "VSC A11Y",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/Jsjjjs6066/VSC-a11y"
@@ -9,7 +9,7 @@
   "publisher": "CHAOSJosipovac",
   "icon": "images/icon.png",
   "engines": {
-    "vscode": "^1.104.0"
+    "vscode": "^1.108.1"
   },
   "categories": [
     "Other"
@@ -161,6 +161,7 @@
     "typescript-eslint": "^8.54.0"
   },
   "dependencies": {
-    "sinon": "^21.0.3"
+    "sinon": "^21.0.3",
+    "vsce": "^2.15.0"
   }
 }
