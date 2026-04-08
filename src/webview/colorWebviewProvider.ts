@@ -102,7 +102,7 @@ export class ColorWebviewProvider implements vscode.WebviewViewProvider {
     
     // Read the static template from filesystem
     const filePath = vscode.Uri.file(
-      path.join(this._extensionUri.fsPath, "src", "webview", "colorWebview.html")
+      path.join(this._extensionUri.fsPath, "html", "colorWebview.html")
     );
     let s: string = fs.readFileSync(filePath.fsPath, 'utf8');
     

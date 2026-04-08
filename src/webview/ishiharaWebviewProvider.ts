@@ -29,7 +29,7 @@ export class IshiharaWebviewProvider implements vscode.WebviewViewProvider {
 
     // Locate the HTML template file
     const filePath = vscode.Uri.file(
-      path.join(this._extensionUri.fsPath, "src", "webview", "ishiharaWebview.html")
+      path.join(this._extensionUri.fsPath, "html", "ishiharaWebview.html")
     );
 
     // Load and set the webview HTML
