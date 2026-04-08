@@ -9,11 +9,5 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
-out
-dist
-node_modules
-*.vsix
-.vscode/**
-theme-test.py
 .claude/**
 docs/**
