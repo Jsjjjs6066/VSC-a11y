@@ -9,7 +9,7 @@
   "publisher": "CHAOSJosipovac",
   "icon": "images/icon.png",
   "engines": {
-    "vscode": "^1.104.0"
+    "vscode": "^1.108.1"
   },
   "categories": [
     "Other"
@@ -161,6 +161,7 @@
     "typescript-eslint": "^8.54.0"
   },
   "dependencies": {
-    "sinon": "^21.0.3"
+    "sinon": "^21.0.3",
+    "vsce": "^2.15.0"
   }
 }
